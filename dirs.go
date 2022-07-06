@@ -22,16 +22,23 @@ import (
 
 var ErrNotFound = errors.New("directory not found")
 
+var DisableCache bool
+
 type cache struct {
 	once sync.Once
-	dir  string
+	str  string
 	err  error
 }
 
-func (c *cache) Dir(f func() (string, error)) (string, error) {
-	c.once.Do(func() { c.dir, c.err = f() })
+func (c *cache) cur(f func() (string, error)) (string, error) {
+	if DisableCache {
+		c.str, c.err = f()
+	} else {
+		c.once.Do(func() { c.str, c.err = f() })
+	}
+
 	if c.err != nil {
 		return "", c.err
 	}
-	return c.dir, nil
+	return c.str, nil
 }
