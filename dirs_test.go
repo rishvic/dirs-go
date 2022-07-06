@@ -18,9 +18,6 @@ package dirs
 import "testing"
 
 func TestCaching(t *testing.T) {
-	// Explicitly enable caching
-	DisableCache = false
-
 	testcases := []struct{ s1, s2 string }{
 		{"1", "2"},
 		{"Lorem ipsum", "dolor sit amet"},
@@ -28,29 +25,26 @@ func TestCaching(t *testing.T) {
 	}
 
 	for _, tc := range testcases {
-		var c cache
-		// Load tc.s1 into cache
-		s1, err := c.cur(mockF(tc.s1))
+		var c Cache
+		// Load s1 into cache
+		s1, err := c.Cur(mockF(tc.s1))
 		if err != nil || s1 != tc.s1 {
 			t.Errorf("Dir: (%q, %v), want (%q, nil)", s1, err, tc.s1)
 		}
 
-		// If tc.s2 is different from tc.s1, check if cache uses previous data
+		// If s2 is different from s1, check if cache uses previous data
 		if tc.s2 == tc.s1 {
 			t.Log("testcase's s1 == s2, continuing...")
 			continue
 		}
-		s2, err := c.cur(mockF(tc.s2))
+		s2, err := c.Cur(mockF(tc.s2))
 		if err != nil || s2 != tc.s1 {
 			t.Errorf("Cached Dir: (%q, %v), want (%q, nil)", s2, err, tc.s1)
 		}
 	}
 }
 
-func TestDisabledCaching(t *testing.T) {
-	// Explicitly disable caching
-	DisableCache = true
-
+func TestCacheReset(t *testing.T) {
 	testcases := []struct{ s1, s2 string }{
 		{"1", "2"},
 		{"Lorem ipsum", "dolor sit amet"},
@@ -58,21 +52,22 @@ func TestDisabledCaching(t *testing.T) {
 	}
 
 	for _, tc := range testcases {
-		var c cache
-		// Load tc.s1 into cache
-		s1, err := c.cur(mockF(tc.s1))
+		var c Cache
+		// Load s1 into cache
+		s1, err := c.Cur(mockF(tc.s1))
 		if err != nil || s1 != tc.s1 {
-			t.Errorf("Dir: (%q, %v), want (%q, <nil>)", s1, err, tc.s1)
+			t.Errorf("Dir: (%q, %v), want (%q, nil)", s1, err, tc.s1)
 		}
 
-		// If tc.s2 is different from tc.s1, check if cache uses new data
+		// Reset cache, and test with s2
 		if tc.s2 == tc.s1 {
 			t.Log("testcase's s1 == s2, continuing...")
 			continue
 		}
-		s2, err := c.cur(mockF(tc.s2))
+		c.Reset()
+		s2, err := c.Cur(mockF(tc.s2))
 		if err != nil || s2 != tc.s2 {
-			t.Errorf("Cached Dir: (%q, %v), want (%q, <nil>)", s2, err, tc.s2)
+			t.Errorf("Reset Dir: (%q, %v), want (%q, nil)", s2, err, tc.s2)
 		}
 	}
 }

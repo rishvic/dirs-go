@@ -22,46 +22,21 @@ import (
 
 var ErrNotFound = errors.New("directory not found")
 
-var DisableCache bool
-
-type cache struct {
+type Cache struct {
 	once sync.Once
 	str  string
 	err  error
 }
 
-func (c *cache) cur(f func() (string, error)) (string, error) {
-	if DisableCache {
-		c.str, c.err = f()
-	} else {
-		c.once.Do(func() { c.str, c.err = f() })
-	}
-
+func (c *Cache) Cur(f func() (string, error)) (string, error) {
+	c.once.Do(func() { c.str, c.err = f() })
 	if c.err != nil {
 		return "", c.err
 	}
 	return c.str, nil
 }
 
-var (
-	homeCache,
-
-	dataCache,
-	dataLocalCache,
-	cacheCache,
-	configCache,
-	executableCache,
-	preferenceCache,
-	runtimeCache,
-	stateCache,
-
-	audioCache,
-	desktopCache,
-	documentCache,
-	downloadCache,
-	fontCache,
-	pictureCache,
-	publicCache,
-	templateCache,
-	videoCache cache
-)
+func (c *Cache) Reset() {
+	var again sync.Once
+	c.once = again
+}

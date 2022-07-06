@@ -28,13 +28,8 @@ and on the JVM ([directories-jvm](https://github.com/dirs-dev/directories-jvm)).
 ## TODO
 
 - Add XDG directory code
+- Remove [`go-homedir`](https://github.com/mitchellh/go-homedir) from dependencies.
 
 ## License
 
 Licensed under Apache License 2.0.
-
-## Contribution
-
-Unless you explicitly state otherwise, any contribution intentionally submitted
-for inclusion in the work by you, as defined in the Apache-2.0 license, shall be
-licensed as above, without any additional terms or conditions.
