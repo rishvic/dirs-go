@@ -42,3 +42,26 @@ func (c *cache) cur(f func() (string, error)) (string, error) {
 	}
 	return c.str, nil
 }
+
+var (
+	homeCache,
+
+	dataCache,
+	dataLocalCache,
+	cacheCache,
+	configCache,
+	executableCache,
+	preferenceCache,
+	runtimeCache,
+	stateCache,
+
+	audioCache,
+	desktopCache,
+	documentCache,
+	downloadCache,
+	fontCache,
+	pictureCache,
+	publicCache,
+	templateCache,
+	videoCache cache
+)

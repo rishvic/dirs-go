@@ -38,22 +38,6 @@ func PublicDir() (string, error)   { return publicCache.cur(kf(windows.FOLDERID_
 func TemplateDir() (string, error) { return templateCache.cur(kf(windows.FOLDERID_Templates)) }
 func VideoDir() (string, error)    { return videoCache.cur(kf(windows.FOLDERID_Videos)) }
 
-var (
-	homeCache,
-	dataCache,
-	dataLocalCache,
-
-	audioCache,
-	desktopCache,
-	documentCache,
-	downloadCache,
-	fontCache,
-	pictureCache,
-	publicCache,
-	templateCache,
-	videoCache cache
-)
-
 func kf(folderID *windows.KNOWNFOLDERID) func() (string, error) {
 	return func() (string, error) {
 		return windows.KnownFolderPath(folderID, 0)

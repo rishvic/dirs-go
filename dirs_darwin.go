@@ -42,22 +42,6 @@ func PublicDir() (string, error)   { return publicCache.cur(joinHome("Public")) 
 func TemplateDir() (string, error) { return "", ErrNotFound }
 func VideoDir() (string, error)    { return videoCache.cur(joinHome("Movies")) }
 
-var (
-	cacheCache,
-	configCache,
-	dataCache,
-	preferenceCache,
-
-	audioCache,
-	desktopCache,
-	documentCache,
-	downloadCache,
-	fontCache,
-	pictureCache,
-	publicCache,
-	videoCache cache
-)
-
 func joinHome(path ...string) func() (string, error) {
 	return func() (string, error) {
 		homeDir, err := HomeDir()
