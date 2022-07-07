@@ -23,13 +23,18 @@ import (
 var ErrNotFound = errors.New("directory not found")
 
 type Cache struct {
+	f    func() (string, error)
 	once sync.Once
 	str  string
 	err  error
 }
 
-func (c *Cache) Cur(f func() (string, error)) (string, error) {
-	c.once.Do(func() { c.str, c.err = f() })
+func NewCache(f func() (string, error)) *Cache {
+	return &Cache{f: f}
+}
+
+func (c *Cache) Cur() (string, error) {
+	c.once.Do(func() { c.str, c.err = c.f() })
 	if c.err != nil {
 		return "", c.err
 	}
