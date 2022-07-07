@@ -17,6 +17,62 @@ package dirs
 
 import "testing"
 
+func TestDirs(t *testing.T) {
+	fs := []func() (string, error){
+		HomeDir,
+
+		CacheDir,
+		ConfigDir,
+		DataDir,
+		DataLocalDir,
+		PreferenceDir,
+		RuntimeDir,
+		StateDir,
+		ExecutableDir,
+
+		AudioDir,
+		DesktopDir,
+		DocumentDir,
+		DownloadDir,
+		FontDir,
+		PictureDir,
+		PublicDir,
+		TemplateDir,
+		VideoDir,
+	}
+
+	names := []string{
+		"HomeDir",
+
+		"CacheDir",
+		"ConfigDir",
+		"DataDir",
+		"DataLocalDir",
+		"PreferenceDir",
+		"RuntimeDir",
+		"StateDir",
+		"ExecutableDir",
+
+		"AudioDir",
+		"DesktopDir",
+		"DocumentDir",
+		"DownloadDir",
+		"FontDir",
+		"PictureDir",
+		"PublicDir",
+		"TemplateDir",
+		"VideoDir",
+	}
+
+	for i := range fs {
+		dir, err := fs[i]()
+		t.Logf("%v:%*s%q %v", names[i], 15-len(names[i]), " ", dir, err)
+		if i == 0 || i == 8 {
+			t.Logf("")
+		}
+	}
+}
+
 func TestCaching(t *testing.T) {
 	testcases := []struct{ s1, s2 string }{
 		{"1", "2"},
