@@ -25,11 +25,6 @@ Other platforms are also supported; they use the XDG conventions.
 It's mid-level sister library, _directories_, is available for Rust ([directories-rs](https://github.com/dirs-dev/directories-rs))
 and on the JVM ([directories-jvm](https://github.com/dirs-dev/directories-jvm)).
 
-## TODO
-
-- Add XDG directory code
-- Remove [`go-homedir`](https://github.com/mitchellh/go-homedir) from dependencies.
-
 ## License
 
 Licensed under Apache License 2.0.
