@@ -24,6 +24,7 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/google/shlex"
 	"github.com/mitchellh/go-homedir"
 )
 
@@ -96,20 +97,18 @@ func userDirLookup(dirType string) (val string, ok bool) {
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
+		subStrs, err := shlex.Split(line)
+		if err != nil || len(subStrs) == 0 {
+			continue
+		}
 
-		key, val, found := strings.Cut(line, "=")
+		key, val, found := strings.Cut(subStrs[0], "=")
 		if !found {
 			continue
 		}
-		if key = strings.TrimSpace(key); key != "XDG_"+dirType+"_DIR" {
+		if key != "XDG_"+dirType+"_DIR" {
 			continue
 		}
-
-		val = strings.TrimSpace(val)
-		if len(val) < 2 || val[0] != '"' || val[len(val)-1] != '"' {
-			continue
-		}
-		val = val[1 : len(val)-1]
 
 		var relative bool
 		if strings.HasPrefix(val, "$HOME/") {
@@ -126,7 +125,6 @@ func userDirLookup(dirType string) (val string, ok bool) {
 			val = filepath.Join(homeDir, val[len("$HOME/"):])
 		}
 
-		val = strings.ReplaceAll(val, `\`, "")
 		return val, true
 	}
 

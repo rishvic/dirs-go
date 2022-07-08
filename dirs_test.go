@@ -74,69 +74,72 @@ func TestDirs(t *testing.T) {
 }
 
 func TestCaching(t *testing.T) {
-	testcases := []struct{ s1, s2 string }{
+	testcases := [][2]string{
 		{"1", "2"},
 		{"Lorem ipsum", "dolor sit amet"},
 		{"Is this the real life?", "Is this just fantasy?"},
 	}
 
 	for _, tc := range testcases {
-		var c Cache
+		m := newMockF(tc[:])
+		c := NewCache(m.str)
 		// Load s1 into cache
-		s1, err := c.Cur(mockF(tc.s1))
-		if err != nil || s1 != tc.s1 {
-			t.Errorf("Dir: (%q, %v), want (%q, nil)", s1, err, tc.s1)
+		s1, err := c.Cur()
+		if err != nil || s1 != tc[0] {
+			t.Errorf("Dir: (%q, %v), want (%q, nil)", s1, err, tc[0])
 		}
 
 		// If s2 is different from s1, check if cache uses previous data
-		if tc.s2 == tc.s1 {
+		if tc[1] == tc[0] {
 			t.Log("testcase's s1 == s2, continuing...")
 			continue
 		}
-		s2, err := c.Cur(mockF(tc.s2))
-		if err != nil || s2 != tc.s1 {
-			t.Errorf("Cached Dir: (%q, %v), want (%q, nil)", s2, err, tc.s1)
+		s2, err := c.Cur()
+		if err != nil || s2 != tc[0] {
+			t.Errorf("Cached Dir: (%q, %v), want (%q, nil)", s2, err, tc[0])
 		}
 	}
 }
 
 func TestCacheReset(t *testing.T) {
-	testcases := []struct{ s1, s2 string }{
+	testcases := [][2]string{
 		{"1", "2"},
 		{"Lorem ipsum", "dolor sit amet"},
 		{"Is this the real life?", "Is this just fantasy?"},
 	}
 
 	for _, tc := range testcases {
-		var c Cache
+		m := newMockF(tc[:])
+		c := NewCache(m.str)
 		// Load s1 into cache
-		s1, err := c.Cur(mockF(tc.s1))
-		if err != nil || s1 != tc.s1 {
-			t.Errorf("Dir: (%q, %v), want (%q, nil)", s1, err, tc.s1)
+		s1, err := c.Cur()
+		if err != nil || s1 != tc[0] {
+			t.Errorf("Dir: (%q, %v), want (%q, nil)", s1, err, tc[0])
 		}
 
 		// Reset cache, and test with s2
-		if tc.s2 == tc.s1 {
+		if tc[1] == tc[0] {
 			t.Log("testcase's s1 == s2, continuing...")
 			continue
 		}
 		c.Reset()
-		s2, err := c.Cur(mockF(tc.s2))
-		if err != nil || s2 != tc.s2 {
-			t.Errorf("Reset Dir: (%q, %v), want (%q, nil)", s2, err, tc.s2)
+		s2, err := c.Cur()
+		if err != nil || s2 != tc[1] {
+			t.Errorf("Reset Dir: (%q, %v), want (%q, nil)", s2, err, tc[1])
 		}
 	}
 }
 
-// Mock function that returns the passed string as return value of function
-func mockF(str string) func() (string, error) {
-	return func() (string, error) { return str, nil }
+type mockF struct {
+	i    int
+	strs []string
 }
 
-// Mock function that always returns an empty string and error
-func mockErrF() (string, error) { return "", ErrNotFound }
+func newMockF(strs []string) *mockF {
+	return &mockF{strs: strs}
+}
 
-// Mock function that returns string, but an error along with it
-func mockWeirdF(str string) func() (string, error) {
-	return func() (string, error) { return str, ErrNotFound }
+func (m *mockF) str() (string, error) {
+	defer func() { m.i = (m.i + 1) % len(m.strs) }()
+	return m.strs[m.i], nil
 }
