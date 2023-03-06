@@ -1,5 +1,5 @@
 /*
-Copyright 2022 Rishvic Pushpakaran
+Copyright 2022-2023 Rishvic Pushpakaran
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -16,12 +16,11 @@ limitations under the License.
 package dirs
 
 import (
+	"os"
 	"path/filepath"
-
-	"github.com/mitchellh/go-homedir"
 )
 
-func HomeDir() (string, error) { return homedir.Dir() }
+func HomeDir() (string, error) { return os.UserHomeDir() }
 
 func CacheDir() (string, error)      { return joinHome("Library", "Caches") }
 func ConfigDir() (string, error)     { return joinHome("Library", "Application Support") }
@@ -48,8 +47,6 @@ func joinHome(path ...string) (string, error) {
 		return "", err
 	}
 
-	elem := make([]string, 1, len(path)+1)
-	elem[0] = homeDir
-	elem = append(elem, path...)
+	elem := append([]string{homeDir}, path...)
 	return filepath.Join(elem...), nil
 }
