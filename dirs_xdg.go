@@ -21,7 +21,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/Colocasian/dirs-go/pkg/xdg"
+	"github.com/rishvic/dirs-go/pkg/xdg"
 )
 
 func HomeDir() (string, error) { return os.UserHomeDir() }

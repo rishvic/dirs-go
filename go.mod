@@ -1,4 +1,4 @@
-module github.com/Colocasian/dirs-go
+module github.com/rishvic/dirs-go
 
 go 1.18
 
